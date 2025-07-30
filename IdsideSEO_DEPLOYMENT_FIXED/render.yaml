@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: idsideseo-api
+    env: python
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --chdir /opt/render/project/src main:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///opt/render/project/src/data/idsideseo.db
+      - key: OPENAI_API_KEY
+        sync: false
+    disk:
+      name: idsideseo-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
+
