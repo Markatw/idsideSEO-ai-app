@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>idsideSEO - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 1rem;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .toggle-form {
+            text-align: center;
+            color: #666;
+        }
+        
+        .toggle-form a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border: 1px solid #fcc;
+        }
+        
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            border: 1px solid #cfc;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>idsideSEO</h1>
+            <p>AI-Powered Content Generator for SEO & Social Media</p>
+        </div>
+        
+        <div id="message"></div>
+        <div class="loading" id="loading">Processing...</div>
+        
+        <!-- Login Form -->
+        <form id="loginForm" style="display: block;">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="toggle-form">
+                Don't have an account? <a href="#" onclick="toggleForm()">Register</a>
+            </div>
+        </form>
+        
+        <!-- Register Form -->
+        <form id="registerForm" style="display: none;">
+            <div class="form-group">
+                <label for="registerName">Full Name</label>
+                <input type="text" id="registerName" required>
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" required>
+            </div>
+            <button type="submit" class="btn">Register</button>
+            <div class="toggle-form">
+                Already have an account? <a href="#" onclick="toggleForm()">Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let isLoginForm = true;
+        
+        function toggleForm() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const message = document.getElementById('message');
+            
+            if (isLoginForm) {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                isLoginForm = false;
+            } else {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                isLoginForm = true;
+            }
+            
+            message.innerHTML = '';
+        }
+        
+        function showMessage(text, type = 'error') {
+            const message = document.getElementById('message');
+            message.innerHTML = `<div class="${type}">${text}</div>`;
+        }
+        
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const forms = document.querySelectorAll('form');
+            
+            if (show) {
+                loading.style.display = 'block';
+                forms.forEach(form => form.style.display = 'none');
+            } else {
+                loading.style.display = 'none';
+                if (isLoginForm) {
+                    document.getElementById('loginForm').style.display = 'block';
+                } else {
+                    document.getElementById('registerForm').style.display = 'block';
+                }
+            }
+        }
+        
+        async function makeRequest(url, data) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.message || 'Request failed');
+            }
+            
+            return result;
+        }
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                showLoading(true);
+                const result = await makeRequest('/api/auth/login', { email, password });
+                
+                if (result.token) {
+                    // Store token and redirect
+                    localStorage.setItem('auth_token', result.token);
+                    document.cookie = `auth_token=${result.token}; path=/; max-age=86400`;
+                    
+                    showMessage('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    throw new Error('No access token received');
+                }
+            } catch (error) {
+                showLoading(false);
+                showMessage(error.message);
+            }
+        });
+        
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            try {
+                showLoading(true);
+                const result = await makeRequest('/api/auth/register', { username, email, password });
+                
+                showMessage('Registration successful! Please login.', 'success');
+                setTimeout(() => {
+                    toggleForm();
+                    showLoading(false);
+                }, 1500);
+            } catch (error) {
+                showLoading(false);
+                showMessage(error.message);
+            }
+        });
+        
+        // Check if already authenticated
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                // Verify token with backend
+                fetch('/api/user/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Already authenticated, redirect to app
+                        window.location.href = '/app';
+                    }
+                })
+                .catch(() => {
+                    // Token invalid, remove it
+                    localStorage.removeItem('auth_token');
+                    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
